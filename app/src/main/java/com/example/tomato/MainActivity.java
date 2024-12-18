@@ -61,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
         secondPicker.setMinValue(0);
         secondPicker.setMaxValue(59);
 
+        // Set default values to 0
+        hourPicker.setValue(0);
+        minutePicker.setValue(0);
+        secondPicker.setValue(0);
+
+        // Initial visibility
+        timerTextView.setVisibility(View.GONE);
+        hourPicker.setVisibility(View.VISIBLE);
+        minutePicker.setVisibility(View.VISIBLE);
+        secondPicker.setVisibility(View.VISIBLE);
+
         updateTimerDisplay();
 
         startPauseButton.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +108,12 @@ public class MainActivity extends AppCompatActivity {
             int seconds = secondPicker.getValue();
             totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
             remainingSeconds = totalSeconds;
+
+            // Update visibility
+            timerTextView.setVisibility(View.VISIBLE);
+            hourPicker.setVisibility(View.GONE);
+            minutePicker.setVisibility(View.GONE);
+            secondPicker.setVisibility(View.GONE);
 
             timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -137,11 +154,22 @@ public class MainActivity extends AppCompatActivity {
         isRunning = false;
         updateTimerDisplay();
         startPauseButton.setText("開始");
+
+        // Update visibility
+        timerTextView.setVisibility(View.GONE);
+        hourPicker.setVisibility(View.VISIBLE);
+        minutePicker.setVisibility(View.VISIBLE);
+        secondPicker.setVisibility(View.VISIBLE);
     }
 
     private void completeTimer() {
         pauseTimer();
         saveCompletionTime();
+        Intent intent = new Intent(MainActivity.this, RecordActivity.class);
+        intent.putExtra("duration", getFormattedDuration());
+        intent.putExtra("endTime", getCurrentTime());
+        startActivity(intent);
+
         switch (currentMode) {
             case POMODORO:
                 currentMode = TimerMode.SHORT_BREAK;
@@ -153,6 +181,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         updateTimerDisplay();
+
+        // Update visibility
+        timerTextView.setVisibility(View.GONE);
+        hourPicker.setVisibility(View.VISIBLE);
+        minutePicker.setVisibility(View.VISIBLE);
+        secondPicker.setVisibility(View.VISIBLE);
+    }
+
+    private String getFormattedDuration() {
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+        return String.format(Locale.getDefault(), "總專心時間 %02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    private String getCurrentTime() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
     }
 
     private void saveCompletionTime() {
@@ -174,6 +219,5 @@ public class MainActivity extends AppCompatActivity {
 
         String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         timerTextView.setText(timeString);
-
     }
 }

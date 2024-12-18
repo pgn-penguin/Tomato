@@ -1,12 +1,9 @@
 package com.example.tomato;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 
-import java.util.Map;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class RecordActivity extends AppCompatActivity {
     @Override
@@ -15,13 +12,14 @@ public class RecordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_record);
 
         TextView recordTextView = findViewById(R.id.recordTextView);
-        SharedPreferences sharedPreferences = getSharedPreferences("FocusRecords", Context.MODE_PRIVATE);
-        Map<String, ?> allEntries = sharedPreferences.getAll();
-        StringBuilder records = new StringBuilder("Focus Time Records:\n");
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            records.append(entry.getValue().toString()).append("\n");
-        }
-        recordTextView.setText(records.toString());
-    }
+        String duration = getIntent().getStringExtra("duration");
+        String endTime = getIntent().getStringExtra("endTime");
 
+        if (duration != null && endTime != null) {
+            String record = duration + "\n結束時間: " + endTime;
+            recordTextView.setText(record);
+        } else {
+            recordTextView.setText("No records found.");
+        }
+    }
 }
