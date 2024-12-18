@@ -174,5 +174,6 @@ public class MainActivity extends AppCompatActivity {
 
         String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         timerTextView.setText(timeString);
+
     }
 }
