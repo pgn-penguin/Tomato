@@ -165,6 +165,16 @@ public class MainActivity extends AppCompatActivity {
     private void completeTimer() {
         pauseTimer();
         saveCompletionTime();
+
+        // Save focus record to SQLite database
+        FocusRecordManager recordManager = new FocusRecordManager(this);
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+        recordManager.insertFocusRecord(currentDate, hours, minutes, seconds);
+        recordManager.close();
+
         Intent intent = new Intent(MainActivity.this, RecordActivity.class);
         intent.putExtra("duration", getFormattedDuration());
         intent.putExtra("endTime", getCurrentTime());
